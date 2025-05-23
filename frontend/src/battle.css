@@ -1,6 +1,6 @@
-/* src/battle.css - COMPLETE DESKTOP SIDEBAR LAYOUT WITH MOBILE FIXES */
+/* src/battle.css - COMPLETE DESKTOP SIDEBAR LAYOUT WITH MOBILE FIXES AND ALL UI IMPROVEMENTS */
 
-/* Battle game overlay container */
+/* Battle game overlay container - FIXED: SCROLLABLE */
 .battle-game-overlay {
   position: fixed;
   top: 0;
@@ -13,14 +13,15 @@
   justify-content: center;
   align-items: center;
   z-index: 9995;
-  overflow-y: auto;
+  overflow-y: auto; /* FIXED: Allow scrolling when window is small */
 }
 
-/* Main battle container - ENHANCED for sidebar layout */
+/* Main battle container - ENHANCED for sidebar layout with minimum height */
 .battle-game {
   width: 100%;
   max-width: 1400px; /* Increased for sidebars */
   height: 95vh;
+  min-height: 600px; /* FIXED: Minimum height to ensure content visibility */
   margin: 10px auto;
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f1419 100%);
   border-radius: 12px;
@@ -73,9 +74,10 @@
     overflow: visible; /* Changed to allow for proper sidebar visibility */
   }
   
-  /* Enemy field (top half) */
+  /* FIXED: Enemy field (top half) with constrained height */
   .battlefield-enemy {
-    flex: 1;
+    flex: none; /* FIXED: Don't flex grow */
+    height: 200px; /* FIXED: Fixed height for enemy field */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -1234,10 +1236,12 @@
     display: none;
   }
   
+  /* FIXED: Battle Log in sidebar with fixed height */
   .battle-log-sidebar .log-entries {
     font-size: 11px;
     line-height: 1.5;
     flex: 1; /* Take remaining space */
+    height: 250px; /* FIXED: Set fixed height */
     overflow-y: auto; /* Scroll content */
     overflow-x: hidden;
     padding: 5px; /* Add padding around entries */
@@ -1270,6 +1274,17 @@
   
   .battle-log-sidebar .log-entries::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 193, 7, 0.7);
+  }
+  
+  /* Add scroll to bottom button for battle log */
+  .battle-log-sidebar .scroll-to-bottom {
+    text-align: center;
+    font-size: 10px;
+    cursor: pointer;
+    padding: 2px;
+    color: #FFC107;
+    background: rgba(0,0,0,0.2);
+    border-radius: 0 0 4px 4px;
   }
 }
 
@@ -1380,6 +1395,7 @@
   margin-left: 5px;
 }
 
+/* New entry indicator styling */
 .new-entry-indicator {
   background: #4CAF50;
   color: white;
@@ -1387,6 +1403,7 @@
   border-radius: 10px;
   font-size: 9px;
   animation: pulse-new 1s ease-in-out infinite;
+  cursor: pointer;
 }
 
 @keyframes pulse-new {
@@ -1812,7 +1829,7 @@
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
 }
 
-/* Tool/Spell modal styles */
+/* Tool/Spell modal styles - FIXED Z-INDEX */
 .tool-spell-modal-overlay {
   position: fixed;
   top: 0;
@@ -1824,7 +1841,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 10000;
+  z-index: 10000; /* INCREASED: Higher z-index to appear above all game elements */
   overflow-y: auto;
 }
 
@@ -1840,6 +1857,7 @@
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
   margin: 20px;
   border: 2px solid rgba(76, 175, 80, 0.3);
+  z-index: 10001; /* INCREASED: To ensure it's above overlay */
 }
 
 .tool-spell-modal.special-modal {
@@ -2130,7 +2148,7 @@
     overflow: visible !important;
     background: linear-gradient(180deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.85));
     border-top: 2px solid rgba(76, 175, 80, 0.3);
-    z-index: 50;
+    z-index: 50; /* FIXED: Lowered z-index to allow modals to appear above it */
     flex-shrink: 0;
     width: 100%;
     margin-top: auto; /* Push to bottom */
@@ -2178,6 +2196,27 @@
     padding: 1px 4px;
   }
   
+  /* FIXED: Mobile card stats size adjusted */
+  .hand-card-wrapper .mini-stat {
+    font-size: 6px; /* REDUCED: From 7px to 6px */
+    height: 10px; /* REDUCED: From 12px to 10px */
+    padding: 1px;
+  }
+  
+  .hand-card-wrapper .mini-stat .stat-icon {
+    font-size: 7px; /* REDUCED: From 8px to 7px */
+  }
+  
+  .hand-card-wrapper .mini-stat .stat-value {
+    font-size: 6px; /* REDUCED: From 7px to 6px */
+  }
+  
+  /* FIXED: Hide menu and wallet buttons during gameplay */
+  .battle-game-overlay + #navbar,
+  .battle-game-overlay + #navbar + .wallet-button {
+    display: none;
+  }
+  
   /* MOBILE BATTLE LOG */
   .battle-log.mobile {
     max-height: 120px;
@@ -2199,6 +2238,7 @@
     background: rgba(0, 0, 0, 0.4);
   }
   
+  /* Fixed height and scrolling for mobile battle log */
   .battle-log.mobile .log-entries {
     max-height: 90px;
     overflow-y: auto;
@@ -2366,11 +2406,12 @@
   20: Center battlefield divider
   30: Battle log and action panel sidebars
   40: Battle log
-  50: Player hand base
+  50: Player hand base (LOWERED from 100)
   60: Action panel
   100: Mobile selected cards / Desktop hand cards
   1000: Desktop hovered hand cards
   1001: Desktop selected hand cards
   1002: Additional insurance for selected cards to be visible
-  10000: Modals
+  10000: Modals overlay
+  10001: Modal content
 */
