@@ -1,16 +1,25 @@
-// src/components/battle/BattleLog.jsx - Improved Battle Log Component with Better Styling
+// src/components/battle/BattleLog.jsx - Fixed Scrolling with Better UI
 import React, { useEffect, useRef, useState } from 'react';
 
 const BattleLog = ({ log }) => {
   const logEndRef = useRef(null);
+  const logContainerRef = useRef(null);
   const [hasNewEntries, setHasNewEntries] = useState(false);
   const [lastLogCount, setLastLogCount] = useState(0);
+  const [isAutoScrollEnabled, setIsAutoScrollEnabled] = useState(true);
   const isDesktop = window.innerWidth >= 769;
   
   // Auto-scroll to bottom when new log entries are added
   useEffect(() => {
     if (logEndRef.current && log.length > lastLogCount) {
-      logEndRef.current.scrollIntoView({ behavior: 'smooth' });
+      // Only auto-scroll if we're already at the bottom or auto-scroll is enabled
+      if (isAutoScrollEnabled) {
+        // Use requestAnimationFrame to ensure DOM has updated
+        requestAnimationFrame(() => {
+          logEndRef.current.scrollIntoView({ behavior: 'smooth' });
+        });
+      }
+      
       setHasNewEntries(true);
       
       // Clear new entry indicator after a delay
@@ -19,7 +28,17 @@ const BattleLog = ({ log }) => {
       setLastLogCount(log.length);
       return () => clearTimeout(timer);
     }
-  }, [log, lastLogCount]);
+  }, [log, lastLogCount, isAutoScrollEnabled]);
+  
+  // Handle scroll events to determine if auto-scroll should be enabled
+  const handleScroll = () => {
+    if (logContainerRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = logContainerRef.current;
+      // If scrolled to bottom (with a small buffer), enable auto-scroll
+      const isAtBottom = scrollHeight - scrollTop - clientHeight < 30;
+      setIsAutoScrollEnabled(isAtBottom);
+    }
+  };
   
   // Categorize log entries for color coding
   const getLogEntryClass = (message) => {
@@ -42,11 +61,26 @@ const BattleLog = ({ log }) => {
         Battle Log
         <div className="log-indicators">
           <span className="log-count">({log.length})</span>
-          {hasNewEntries && <span className="new-entry-indicator">New!</span>}
+          {hasNewEntries && !isAutoScrollEnabled && (
+            <span 
+              className="new-entry-indicator" 
+              onClick={() => {
+                setIsAutoScrollEnabled(true);
+                logEndRef.current.scrollIntoView({ behavior: 'smooth' });
+              }}
+              style={{ cursor: 'pointer' }}
+            >
+              New! ↓
+            </span>
+          )}
         </div>
       </div>
       
-      <div className="log-entries" style={{ maxHeight: 'calc(100% - 40px)' }}>
+      <div 
+        className="log-entries"
+        ref={logContainerRef}
+        onScroll={handleScroll}
+      >
         {log.length === 0 ? (
           <div className="empty-log-message">No battle events yet...</div>
         ) : (
@@ -61,8 +95,20 @@ const BattleLog = ({ log }) => {
           ))
         )}
         
-        <div ref={logEndRef} />
+        <div ref={logEndRef} style={{ height: '1px', width: '1px' }} />
       </div>
+      
+      {!isAutoScrollEnabled && (
+        <div 
+          className="scroll-to-bottom"
+          onClick={() => {
+            setIsAutoScrollEnabled(true);
+            logEndRef.current.scrollIntoView({ behavior: 'smooth' });
+          }}
+        >
+          ↓ Scroll to Latest
+        </div>
+      )}
     </div>
   );
 };
