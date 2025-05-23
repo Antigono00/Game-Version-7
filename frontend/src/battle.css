@@ -1,6 +1,6 @@
 /* src/battle.css - COMPLETE DESKTOP SIDEBAR LAYOUT WITH MOBILE FIXES AND ALL UI IMPROVEMENTS */
 
-/* Battle game overlay container - FIXED: SCROLLABLE */
+/* Add critical direct style injection to force hiding wallet buttons */
 .battle-game-overlay {
   position: fixed;
   top: 0;
@@ -14,18 +14,46 @@
   align-items: center;
   z-index: 9995;
   overflow-y: auto; /* FIXED: Allow scrolling when window is small */
+  overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
-/* Main battle container - ENHANCED for sidebar layout with minimum height */
+/* Additional style to directly inject into the document style and override the MobileRadixWrapper */
+.battle-game-overlay::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: transparent;
+  z-index: 11000; /* Higher than the wallet button's z-index */
+  pointer-events: none;
+}
+
+/* Hide the actual connect button explicitly by applying styles directly based on its position */
+body:has(.battle-game-overlay) *[style*="position: fixed"][style*="top: 10px"][style*="right: 60px"],
+body:has(.battle-game-overlay) *[style*="position:fixed"][style*="top:10px"][style*="right:60px"],
+body:has(.battle-game-overlay) button[style*="position: fixed"][style*="top: 10px"][style*="right: 60px"],
+body:has(.battle-game-overlay) button[style*="position:fixed"][style*="top:10px"][style*="right:60px"] {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  z-index: -1 !important;
+  position: absolute !important; 
+  transform: scale(0) !important;
+}
+
+/* Main battle container - ENHANCED for sidebar layout with minimum height - IMPROVED: Scrollable content */
 .battle-game {
   width: 100%;
   max-width: 1400px; /* Increased for sidebars */
-  height: 95vh;
+  height: auto; /* CHANGED: from 95vh to auto to enable proper scrolling */
   min-height: 600px; /* FIXED: Minimum height to ensure content visibility */
   margin: 10px auto;
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f1419 100%);
   border-radius: 12px;
-  overflow: hidden;
+  overflow: visible; /* CHANGED: from hidden to visible to allow content to overflow */
   color: #e6e6e6;
   font-family: 'Orbitron', sans-serif;
   display: flex;
@@ -43,7 +71,8 @@
     flex: 1;
     position: relative;
     overflow: visible; /* Changed from hidden to visible to allow cards to expand */
-    height: calc(100% - 45px); /* Account for header */
+    height: auto; /* CHANGED: From fixed height to auto for better scrolling */
+    min-height: 600px; /* Minimum height to ensure content has space */
   }
   
   /* Main battle area in center */
@@ -150,15 +179,15 @@
     z-index: 5; /* Lower than sidebars */
   }
   
-  /* Right sidebar - Action Panel */
+  /* Right sidebar - Action Panel - IMPROVED: Reduced size */
   .action-panel-sidebar {
-    width: 220px; /* Slightly wider for better visibility */
+    width: 200px; /* REDUCED: from 220px to 200px */
     background: linear-gradient(180deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.85));
     border-left: 2px solid rgba(76, 175, 80, 0.3);
     display: flex;
     flex-direction: column;
     flex-shrink: 0;
-    padding: 15px;
+    padding: 10px; /* REDUCED: from 15px to 10px */
     max-height: 100%; /* Ensure it doesn't go beyond player section */
     overflow-y: auto;
     position: relative;
@@ -435,6 +464,9 @@
   position: relative;
   min-height: 45px;
   flex-shrink: 0;
+  position: sticky; /* IMPROVED: Make header sticky */
+  top: 0; /* IMPROVED: Stick to the top */
+  z-index: 1000; /* IMPROVED: Ensure it stays above other content */
 }
 
 .battle-header::after {
@@ -1119,22 +1151,22 @@
   }
 }
 
-/* DESKTOP ACTION PANEL SIDEBAR */
+/* DESKTOP ACTION PANEL SIDEBAR - IMPROVED: SMALLER SIZE */
 @media (min-width: 769px) {
   .action-panel-sidebar .action-info {
-    padding: 10px 0;
+    padding: 8px 0; /* REDUCED: from 10px to 8px */
     text-align: center;
     color: #aaa;
     font-style: italic;
-    font-size: 12px;
+    font-size: 11px; /* REDUCED: from 12px to 11px */
   }
   
   .action-panel-sidebar .selected-info {
-    margin-bottom: 15px;
+    margin-bottom: 12px; /* REDUCED: from 15px to 12px */
     flex-direction: column;
     align-items: flex-start;
-    gap: 8px;
-    padding: 8px;
+    gap: 6px; /* REDUCED: from 8px to 6px */
+    padding: 6px; /* REDUCED: from 8px to 6px */
     background: rgba(0, 0, 0, 0.3);
     border-radius: 5px;
     border-left: 3px solid #4CAF50;
@@ -1148,42 +1180,73 @@
   .action-panel-sidebar .target-creature {
     display: block;
     background: rgba(76, 175, 80, 0.2);
-    padding: 4px 8px;
+    padding: 3px 6px; /* REDUCED: from 4px 8px to 3px 6px */
     border-radius: 3px;
-    font-size: 12px;
+    font-size: 11px; /* REDUCED: from 12px to 11px */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    margin-bottom: 4px;
+    margin-bottom: 3px; /* REDUCED: from 4px to 3px */
   }
   
   .action-panel-sidebar .action-arrow {
     display: block;
     text-align: center;
     color: #4CAF50;
-    margin: 4px 0;
+    margin: 3px 0; /* REDUCED: from 4px to 3px */
     font-weight: bold;
   }
   
   .action-panel-sidebar .action-buttons {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px; /* REDUCED: from 10px to 8px */
   }
   
   .action-panel-sidebar .action-btn {
     width: 100%;
-    padding: 10px 15px;
-    font-size: 12px;
-    border-radius: 8px;
+    padding: 8px 12px; /* REDUCED: from 10px 15px to 8px 12px */
+    font-size: 11px; /* REDUCED: from 12px to 11px */
+    border-radius: 6px; /* REDUCED: from 8px to 6px */
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 5px;
+    gap: 4px; /* REDUCED: from 5px to 4px */
   }
   
   .action-panel-sidebar .action-btn .btn-icon {
-    font-size: 14px;
+    font-size: 13px; /* REDUCED: from 14px to 13px */
+  }
+  
+  /* Creature stats summary - IMPROVED: Smaller size */
+  .action-panel-sidebar .creature-stats-summary {
+    margin-top: 3px; /* ADDED: Add small top margin */
+    margin-bottom: 6px; /* ADDED: Add bottom margin */
+  }
+  
+  .action-panel-sidebar .summary-stats {
+    display: flex;
+    justify-content: space-between;
+    padding: 3px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+  }
+  
+  .action-panel-sidebar .summary-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 10px; /* REDUCED: from previous size */
+  }
+  
+  .action-panel-sidebar .summary-stat .stat-icon {
+    font-size: 11px; /* REDUCED: from previous size */
+    margin-bottom: 2px;
+  }
+  
+  .action-panel-sidebar .summary-stat .stat-value {
+    font-weight: bold;
+    font-size: 11px; /* REDUCED: from previous size */
   }
   
   /* Scrollbar styling for action panel */
@@ -2211,11 +2274,64 @@
     font-size: 6px; /* REDUCED: From 7px to 6px */
   }
   
-  /* FIXED: Hide menu and wallet buttons during gameplay */
-  .battle-game-overlay + #navbar,
-  .battle-game-overlay + #navbar + .wallet-button {
-    display: none;
-  }
+/* Reset previous approaches - Back to basics with a better stacking context solution */
+.battle-game-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999999 !important; /* EXTREMELY high z-index to be above everything */
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Ensure the battle game inherits the high z-index */
+.battle-game {
+  /* Main styles remain unchanged */
+  width: 100%;
+  max-width: 1400px;
+  height: auto;
+  min-height: 600px;
+  margin: 10px auto;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f1419 100%);
+  border-radius: 12px;
+  overflow: visible;
+  color: #e6e6e6;
+  font-family: 'Orbitron', sans-serif;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7), 0 0 20px rgba(76, 175, 80, 0.1);
+  position: relative;
+  z-index: inherit; /* Inherit the high z-index from parent */
+  border: 2px solid rgba(76, 175, 80, 0.3);
+}
+
+/* DIRECT CODE-BASED SOLUTION FOR MOBILE RADIX BUTTON */
+/* This uses the exact styles and identifiers from your MobileRadixWrapper component */
+body:has(.battle-game-overlay) button[style*="position: fixed"][style*="top: 10px"][style*="right: 60px"],
+body:has(.battle-game-overlay) button[style*="position:fixed"][style*="top:10px"][style*="right:60px"],
+body:has(.battle-game-overlay) button[style*="position: fixed; top: 10px; right: 60px"],
+body:has(.battle-game-overlay) button[style*="zIndex: 10000"],
+body:has(.battle-game-overlay) button[style*="z-index: 10000"] {
+  /* Since this is in the MobileRadixWrapper.jsx code:
+     position: 'fixed',
+     top: '10px',
+     right: '60px',
+     zIndex: 10000,
+  */
+  display: none !important;
+  top: -9999px !important;
+  left: -9999px !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
   
   /* MOBILE BATTLE LOG */
   .battle-log.mobile {
